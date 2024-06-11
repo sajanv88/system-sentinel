@@ -12,8 +12,7 @@ export class SystemController {
     
     @Get("/cpu")
     async getCpuUsage() {
-        // Todo: Implement cpu stats
-        return new NotImplementedException("CPU usage not implemented yet.")
+        return this.cpu.getUsage();
     }
 
     @Get("/net")
