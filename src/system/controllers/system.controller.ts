@@ -1,4 +1,4 @@
-import { Controller, Get, NotImplementedException } from "@nestjs/common";
+import {Body, Controller, Get, NotImplementedException, Post} from "@nestjs/common";
 import { CPUService } from "../services/cpu.service";
 import { NetworkService } from "../services/network.service";
 import { DiskService } from "../services/disk.service";
@@ -23,7 +23,10 @@ export class SystemController {
 
     @Get("/disk")
     async getDiskUsage() {
-        // Todo: Implement disk stats
-        return new NotImplementedException("Disk usage not implemented yet.")
+        return this.disk.getUsage();
+    }
+    @Post("/disk")
+    async getDiskUsageByPath(@Body() payload: {path: string}) {
+        return this.disk.getUsage(payload.path);
     }
 }
