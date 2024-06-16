@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {NotSupportedException} from "../../not-supported.exception";
+import {formatBytes} from "../utils/utils";
 
 @Injectable()
 export class DiskService {
@@ -56,10 +57,10 @@ export class DiskService {
                 const totalUsagePercentage = (totalUsedSpace / totalDiskSpace) * 100;
 
                 return {
-                    total: totalDiskSpace,
-                    free: totalFreeSpace,
-                    used: totalUsedSpace,
-                    usage: Number(totalUsagePercentage.toFixed(2))
+                    total: formatBytes(totalDiskSpace),
+                    free: formatBytes(totalFreeSpace),
+                    used: formatBytes(totalUsedSpace),
+                    usage: Number(totalUsagePercentage.toFixed(2)) + "%"
                 };
             }
         } catch (error) {
@@ -76,14 +77,17 @@ export class DiskService {
             const currentPathDiskUsage = await this.getUsageByPath(path);
             const totalDiskInformation = await this.getTotalDiskUsage();
             return {
-                currentPathDiskUsage,
+                currentPathDiskUsage: {
+                    total: formatBytes(currentPathDiskUsage.total),
+                    free: formatBytes(currentPathDiskUsage.free),
+                    used: formatBytes(currentPathDiskUsage.used),
+                    usage: Number(currentPathDiskUsage.usage.toFixed(2)) + "%"
+                },
                 totalDiskInformation,
                 path
             }
         }else {
             throw new NotSupportedException("Supported platforms are Linux and MacOs");
         }
-
-
     }
 }

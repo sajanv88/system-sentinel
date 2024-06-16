@@ -1,7 +1,8 @@
-import {Body, Controller, Get, NotImplementedException, Post} from "@nestjs/common";
+import {Body, Controller, Get, NotImplementedException, Post, Sse} from "@nestjs/common";
 import { CPUService } from "../services/cpu.service";
 import { NetworkService } from "../services/network.service";
 import { DiskService } from "../services/disk.service";
+import {interval, map, Observable} from "rxjs";
 
 @Controller("sys")
 export class SystemController {
@@ -17,8 +18,17 @@ export class SystemController {
 
     @Get("/net")
     async getNetworkUsage() {
-        // Todo: Implement net stats
-        return new NotImplementedException("Network stats not implemented yet.")
+       return this.net.getUsage();
+    }
+
+    @Get('/net/active_stats')
+    async getActiveNetworkStats() {
+        return this.net.getActiveNetworkStats();
+    }
+
+    @Sse("/network_stats")
+    sse(): Observable<any> {
+        return interval(1000).pipe(map(() => this.net.getStats()))
     }
 
     @Get("/disk")
